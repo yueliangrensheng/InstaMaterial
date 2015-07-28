@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="false">
-
+        <layer-list>
+            <item android:bottom="0dp" android:left="2dp" android:right="0dp" android:top="2dp">
+                <shape android:shape="rectangle">
+                    <corners android:radius="2dp"></corners>
+                    <solid android:color="@color/fab_color_shadow"></solid>
+                </shape>
+            </item>
+            <item android:bottom="1dp" android:left="1dp" android:right="1dp" android:top="1dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/btn_send_normal"></solid>
+                    <corners android:radius="2dp"></corners>
+                </shape>
+            </item>
+        </layer-list>
     </item>
-    <item android:state_pressed="true" >
-        <shape android:shape="rectangle">
+    <item android:state_pressed="true">
+        <shape android:bottom="0dp" android:left="2dp" android:right="0dp" android:shape="rectangle" android:top="2dp">
             <corners android:radius="2dp"></corners>
+            <solid android:color="@color/btn_send_pressed"></solid>
         </shape>
     </item>
 </selector>

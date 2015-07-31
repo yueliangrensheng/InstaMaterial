@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.ImageView;
 
 import com.yazao.instamaterial.R;
+import com.yazao.instamaterial.util.HideSoftInputUtil;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -46,5 +48,15 @@ public class BaseActivity extends ActionBarActivity {
         menuItem = menu.findItem(R.id.action_inbox);
         menuItem.setActionView(R.layout.menu_item_view);
         return true;
+    }
+    /** 处理键盘 */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            if (HideSoftInputUtil.getInstance(this).isShouldHideInput(ev)) {
+                HideSoftInputUtil.getInstance(this).hideSoftInput();
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

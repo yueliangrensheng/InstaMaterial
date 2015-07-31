@@ -3,6 +3,7 @@ package com.yazao.instamaterial.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -10,8 +11,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.yazao.instamaterial.R;
 import com.yazao.instamaterial.adapter.FeedAdapter;
@@ -20,7 +23,7 @@ import com.yazao.instamaterial.util.Utils;
 import butterknife.InjectView;
 
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements FeedAdapter.OnFeedItemClickListener {
 
     @InjectView(R.id.rvFeed)
     RecyclerView rvFeed;
@@ -75,6 +78,8 @@ public class MainActivity extends BaseActivity {
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
+
+        adapter.setOnFeedItemClickListener(this);
 
     }
 
@@ -144,5 +149,21 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCommentsClick(View view, int position) {
+
+        int [] startingLocation=new int[2];
+        view.getLocationOnScreen(startingLocation);
+
+        Intent intent =new Intent(this,CommentsActivity.class);
+        intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION,startingLocation[1]);
+        startActivity(intent);
+
+        //屏蔽 Activity的默认切换效果，这样： 新的窗口不会有任何移动仅仅是绘制在上个窗口的上面。 就可以实现Toolbar的静态显示。 同时，屏蔽了MainActivity得退出效果，以及 CommentsActivity的进入效果。
+        overridePendingTransition(0,0);
+
+
     }
 }

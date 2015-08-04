@@ -21,6 +21,10 @@
             android:name=".activity.BaseActivity"
             android:label="@string/title_activity_base" >
         </activity>
+        <activity
+            android:windowSoftInputMode="stateHidden"
+            android:name=".activity.CommentsActivity" android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
     </application>
 
 </manifest>

@@ -7,9 +7,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -48,13 +50,13 @@ public class CommentsActivity extends BaseActivity implements SendCommentButton.
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_comments);
-        
+
         setupComments();
         setupSendCommentButton();
 
-        drawingStartLoction=getIntent().getIntExtra(ARG_DRAWING_START_LOCATION,0);
+        drawingStartLoction = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
 
-        if (savedInstanceState==null){
+        if (savedInstanceState == null) {
             // 该监听 作用： 在view树完成测量并且分配空间而绘制过程还没有开始的时候播放动画
             contentRoot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -65,7 +67,6 @@ public class CommentsActivity extends BaseActivity implements SendCommentButton.
                 }
             });
         }
-
 
 
     }
@@ -98,21 +99,20 @@ public class CommentsActivity extends BaseActivity implements SendCommentButton.
     }
 
 
-
     private void setupComments() {
-        LinearLayoutManager layoutManager =new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvComments.setLayoutManager(layoutManager);
 
         rvComments.setHasFixedSize(true);
 
-         adater=new CommentsAdapter(this);
+        adater = new CommentsAdapter(this);
         rvComments.setAdapter(adater);
 
         rvComments.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 //在 滚动时，item没有动画
-                if(newState==RecyclerView.SCROLL_STATE_DRAGGING){
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     adater.setAnimationsLocked(true);
                 }
             }
@@ -121,11 +121,25 @@ public class CommentsActivity extends BaseActivity implements SendCommentButton.
 
     @Override
     public void onSendClickListener(View v) {
+        if (validateComment()) {
+            return;
+        }
         adater.addItem();
         adater.setAnimationsLocked(false);
         adater.setDelayEnterAnimation(false);
         rvComments.smoothScrollBy(0, rvComments.getChildAt(0).getHeight() * adater.getItemCount());
 
+        etComment.setText("");
+        btnSendComment.setCurrentState(SendCommentButton.STATE_DONE);
+
+    }
+
+    private boolean validateComment() {
+        if (TextUtils.isEmpty(etComment.getText().toString())) {
+            btnSendComment.startAnimation(AnimationUtils.loadAnimation(this,R.anim.shake_error));
+            return true;
+        }
+        return false;
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -136,7 +150,7 @@ public class CommentsActivity extends BaseActivity implements SendCommentButton.
             @Override
             public void onAnimationEnd(Animator animation) {
                 CommentsActivity.super.onBackPressed();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
         }).start();
     }

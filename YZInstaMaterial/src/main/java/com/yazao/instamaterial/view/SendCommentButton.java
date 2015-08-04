@@ -40,6 +40,7 @@ public class SendCommentButton extends ViewAnimator implements View.OnClickListe
     }
 
     private void init() {
+        //将布局 文件 inflate 给了ViewAnimator
         LayoutInflater.from(getContext()).inflate(R.layout.view_send_comment_button, this, true);
     }
 
@@ -52,6 +53,8 @@ public class SendCommentButton extends ViewAnimator implements View.OnClickListe
 
     @Override
     protected void onDetachedFromWindow() {
+        //为了防止 activity结束的时候按钮的状态还没有切换回来。 该方法是 去掉了回调方法
+        //android.view.View.removeCallbacks();
         removeCallbacks(revertStateRunnable);
         super.onDetachedFromWindow();
     }

@@ -122,17 +122,20 @@ public class DrawerLayoutInstaller {
         }
 
         private void addDrawerToActivity(DrawerLayout drawerLayout) {
+            // 得到 Activity 的根view  ,  同时 将 它的 唯一子 view 拿掉
             ViewGroup rootView = (ViewGroup) activity.findViewById(android.R.id.content);
-            ViewGroup drawerContentRoot = (ViewGroup) drawerLayout.getChildAt(0);
             View contentView = rootView.getChildAt(0);
-
             rootView.removeView(contentView);
 
+            //根据  drawerLayout 的布局， 其 第一个 孩子是 content view
+            ViewGroup drawerContentRoot = (ViewGroup) drawerLayout.getChildAt(0);
+            // 将从 Activity的根 view中 拿掉的子View 放到抽屉 的 content view 中
             drawerContentRoot.addView(contentView, new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
             ));
 
+            // 将抽屉布局 作为孩子 放到 Activity的根View中。
             rootView.addView(drawerLayout, new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT

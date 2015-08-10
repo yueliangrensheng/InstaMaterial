@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,16 +13,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.yazao.instamaterial.R;
 import com.yazao.instamaterial.adapter.FeedAdapter;
+import com.yazao.instamaterial.config.GlobalParams;
 import com.yazao.instamaterial.util.Utils;
+import com.yazao.instamaterial.view.FeedContextMenu;
+import com.yazao.instamaterial.view.FeedContextMenuManager;
 
 import butterknife.InjectView;
 
 
-public class MainActivity extends BaseActivity implements FeedAdapter.OnFeedItemClickListener {
+public class MainActivity extends BaseActivity implements FeedAdapter.OnFeedItemClickListener, FeedContextMenu.OnFeedContextMenuItemClickListener {
 
     @InjectView(R.id.rvFeed)
     RecyclerView rvFeed;
@@ -49,7 +50,7 @@ public class MainActivity extends BaseActivity implements FeedAdapter.OnFeedItem
         if (savedInstanceState == null) {
             pendingInroAnimation = true;
         } else {
-
+//            adapter.updateItems(false);
         }
 
     }
@@ -68,14 +69,11 @@ public class MainActivity extends BaseActivity implements FeedAdapter.OnFeedItem
         rvFeed.setAdapter(adapter);
 
         rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
+
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+                FeedContextMenuManager.getInstance().onScrolled(recyclerView,dx,dy);
             }
         });
 
@@ -132,7 +130,7 @@ public class MainActivity extends BaseActivity implements FeedAdapter.OnFeedItem
                 .setStartDelay(300)
                 .setDuration(ANIM_DURATION_FAB)
                 .start();
-        adapter.updateItems();
+        adapter.updateItems(true);
 
     }
 
@@ -165,5 +163,42 @@ public class MainActivity extends BaseActivity implements FeedAdapter.OnFeedItem
         overridePendingTransition(0,0);
 
 
+    }
+
+    @Override
+    public void onMoreClick(View v, int position) {
+        FeedContextMenuManager.getInstance().toggleContextMenuFromView(v,position,this);
+    }
+
+    @Override
+    public void onProfileClick(View v) {
+        if(!GlobalParams.IS_OPEN_PROFILE_ACTIVITY) {
+            GlobalParams.IS_OPEN_PROFILE_ACTIVITY=true;
+            int[] startingLocation = new int[2];
+            v.getLocationOnScreen(startingLocation);
+            startingLocation[0] += v.getWidth() / 2;
+            UserProfileActivity.startUserProfileFromLocation(startingLocation, this);
+            overridePendingTransition(0, 0);
+        }
+    }
+
+    @Override
+    public void onReportClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onSharePhotoClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onCopyShareUrlClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onCancelClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
     }
 }
